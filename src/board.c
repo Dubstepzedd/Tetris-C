@@ -15,20 +15,20 @@ void init_board(Board* board) {
     }
 }
 
-void free_board(Board board) {
-    if (board.board != NULL) {
-        for (int i = 0; i < board.height; i++) {
-            free(board.board[i]);
+void free_board(Board* board) {
+    if (board->board != NULL) {
+        for (int i = 0; i < board->height; i++) {
+            free(board->board[i]);
         }
-        free(board.board);
+        free(board->board);
     }
 }
 
 
-void print_board(Board board) {
-    for(int i = 0; i < board.height; i++) {  // Loop over height for rows
-        for(int j = 0; j < board.width; j++) {  // Loop over width for columns
-            printf("%d", board.board[i][j]);
+void print_board(Board* board) {
+    for(int i = 0; i < board->height; i++) {  // Loop over height for rows
+        for(int j = 0; j < board->width; j++) {  // Loop over width for columns
+            printf("%d", board->board[i][j]);
         }
         printf("\n");
     }

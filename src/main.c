@@ -17,13 +17,16 @@ int main() {
     board.width = 10;
     board.height = 20;
     init_board(&board);
-
+    Tetromino tetromino;
+    tetromino.type = TETROMINO_I;
+    tetromino.x = 0;
+    tetromino.y = 0;
+    tetromino.shape = getTetrominoShape(tetromino.type);
     
     double elapsedTime = 0;
     double timeDiff = 0;
     double start = clock();
     double end = 0;
-
     while(true) {
         end = clock();
         timeDiff = (end - start) / CLOCKS_PER_SEC;
@@ -38,11 +41,11 @@ int main() {
             #else
                 system("clear");  // For Unix/Linux/Mac
             #endif
-            print_board(board);
+            print_board(&board);
             elapsedTime = 0;
         }
     }
 
-    free_board(board);
+    free_board(&board);
     return 0;
 }

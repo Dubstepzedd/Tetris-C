@@ -11,6 +11,6 @@ typedef struct Board {
 
 void init_board(Board* board);
 
-void print_board(Board board);
+void print_board(Board* board);
 
-void free_board(Board board);
+void free_board(Board* board);

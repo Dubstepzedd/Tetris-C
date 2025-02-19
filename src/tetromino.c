@@ -52,7 +52,7 @@ const int TETROMINO_SHAPES[TETROMINO_COUNT][TETROMINO_SIZE][TETROMINO_SIZE] = {
 };
 
 
-const int (*getTerominoShape(TetrominoType type))[TETROMINO_SIZE] {
+const int (*getTetrominoShape(TetrominoType type))[TETROMINO_SIZE] {
     return TETROMINO_SHAPES[type];
 }
 
