@@ -18,4 +18,5 @@ void print_board(Board* board);
 
 void free_board(Board* board);
 
+void check_line_clears(Board* board);
 #endif
