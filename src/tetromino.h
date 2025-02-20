@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include "board.h"
 
 typedef enum {
     TETROMINO_I,
@@ -15,10 +17,17 @@ typedef enum {
 
 typedef struct {
     TetrominoType type;
-    int x, y;      // Position on the board
+    int x, y; 
+    int prev_x, prev_y; 
     const int (*shape)[TETROMINO_SIZE];
 } Tetromino;
 
-const int (*getTetrominoShape(TetrominoType type))[TETROMINO_SIZE];
+const int TETROMINO_SHAPES[TETROMINO_COUNT][TETROMINO_SIZE][TETROMINO_SIZE];
 
-void printTetromino(Tetromino* tetromino);
+const int (*get_tetromino_shape(TetrominoType type))[TETROMINO_SIZE];
+
+Tetromino create_tetromino(TetrominoType type);
+
+void add_tetromino(Board* board, Tetromino* tetromino);
+
+bool is_inside_board(Board* board, Tetromino* tetromino, int x_diff, int y_diff);
