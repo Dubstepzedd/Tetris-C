@@ -13,7 +13,7 @@ Feel free to download and build it yourself!
 
 The game lacks the following:
 * A score system
-* Tetromino bag system (which tetromino that appears is entirely random)
+* The correct ["bag system"](https://tetris.fandom.com/wiki/Random_Generator)
 * Better visuals
 
 
