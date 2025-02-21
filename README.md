@@ -1,4 +1,4 @@
-# Tetris
+# Tetris-C
 
 ## Description
 This is a simple console based Tetris game that is developed in C. The game is supported on Unix and Windows.
