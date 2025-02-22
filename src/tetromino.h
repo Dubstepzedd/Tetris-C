@@ -29,7 +29,6 @@ typedef struct {
     int** shape;
 } Tetromino;
 
-const int TETROMINO_SHAPES[TETROMINO_COUNT][TETROMINO_SIZE][TETROMINO_SIZE];
 
 const int (*get_tetromino_shape(TetrominoType type))[TETROMINO_SIZE];
 

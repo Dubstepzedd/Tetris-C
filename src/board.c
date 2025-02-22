@@ -1,4 +1,9 @@
 #include "board.h"
+#ifdef _WIN32
+    #include <curses.h> // PDCurses on Windows
+#else
+    #include <ncurses.h> // ncurses on Linux/Unix
+#endif
 
 void init_board(Board* board) {
     // Allocate memory for the 2D array
@@ -37,18 +42,22 @@ void free_board(Board* board) {
 
 
 void print_board(Board* board) {
+    clear();
+
     for(int i = 0; i < board->height; i++) {  // Loop over height for rows
         for(int j = 0; j < board->width; j++) {  // Loop over width for columns
             int val = board->board[i][j];
             if (val == 0) {
-                printf(" . ");
+                addstr(" . ");
             } 
             else {
-                printf(" O ");
+                addstr(" O ");
             }
         }
-        printf("\n");
+        addstr("\n");
     }
+
+    refresh();
 }
 
 void check_line_clears(Board* board) {

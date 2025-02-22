@@ -2,12 +2,15 @@
 #include "board.h"
 #include <time.h>
 #include "tetromino.h"
-#include <conio.h>
+#include <stdlib.h>
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
     #include <windows.h>
+    #include <curses.h> 
 #else
     #include <pthread.h>
+    #include <unistd.h>
+    #include <ncurses.h>
 #endif
 
 #define RENDER_THRESHOLD 0.1
@@ -15,11 +18,12 @@
 
 volatile char last_char = '\0'; // Volatile ensures proper multi-threading handling
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
 DWORD WINAPI thread_function(LPVOID lpParam) {
     while (1) {
-        if (_kbhit()) {
-            last_char = _getch();
+        int ch = getch(); 
+        if (ch != ERR) {
+            last_char = (char)ch; // Store the character
         }
 
         Sleep(10); 
@@ -27,19 +31,23 @@ DWORD WINAPI thread_function(LPVOID lpParam) {
     return 0;
 }
 #else
+
+
+
 void* thread_function(void* arg) {
+
     while (1) {
-        if (_kbhit()) {
-            last_char = _getch();
+        int ch = getch(); 
+        if (ch != ERR) {
+            last_char = (char)ch; // Store the character
         }
-        usleep(10000); // Sleep for 10ms
+        
+        usleep(10000); 
     }
-    return NULL;
 }
 #endif
 
 void process_input(Board* board, Tetromino* tetromino) {
-
     switch (last_char) {
         case 'a': // Move left
             if (!is_colliding(board, tetromino, -1, 0))
@@ -63,6 +71,14 @@ void process_input(Board* board, Tetromino* tetromino) {
 }
 
 int main() {
+    #ifndef _WIN32
+        initscr(); // Initialize the ncurses screen for Unix
+        timeout(0);           // Non-blocking input (timeout 0)
+        cbreak();             // Disable line buffering
+        noecho();             // Don't echo input
+        keypad(stdscr, TRUE); // Enable special keys
+    #endif
+
     Board board;
     board.width = 10;
     board.height = 20;
@@ -75,12 +91,12 @@ int main() {
     pthread_t thread;
     pthread_create(&thread, NULL, thread_function, NULL);
 #endif
-   
+
     double render_elapsed = 0;
     double move_down_elapsed = 0;
     clock_t start_time = clock();
 
-    while (true) {
+    while (1) {
         // Calculate delta time
         clock_t current_time = clock();
         double delta_time = (double)(current_time - start_time) / CLOCKS_PER_SEC;
@@ -94,12 +110,8 @@ int main() {
 
         // Render board at set intervals
         if (render_elapsed >= RENDER_THRESHOLD) {
-            #ifdef _WIN32
-                system("cls");  // Windows clear screen
-            #else
-                system("clear"); // Unix/Linux clear screen
-            #endif
             clear_board(&board);
+           
             add_tetromino(&board, &tetromino, TETROMINO_MOVING);
             print_board(&board);
             render_elapsed = 0;
@@ -116,6 +128,7 @@ int main() {
 
                 if (is_colliding(&board, &tetromino, 0, 0)) {
                     printf("Game Over!\n");
+                    free_tetromino(&tetromino);
                     break;  // Exit the loop (end the game)
                 }
             }
@@ -126,8 +139,9 @@ int main() {
 
     // Cleanup (won't execute due to infinite loop, but good practice)
     free_board(&board);
+    endwin(); 
 
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
     CloseHandle(thread);
 #else
     pthread_cancel(thread);
