@@ -6,7 +6,7 @@
 
 #ifdef _WIN32
     #include <windows.h>
-    #include <curses.h> 
+    #include <conio.h> 
 #else
     #include <pthread.h>
     #include <unistd.h>
@@ -21,15 +21,15 @@ volatile char last_char = '\0'; // Volatile ensures proper multi-threading handl
 #ifdef _WIN32
 DWORD WINAPI thread_function(LPVOID lpParam) {
     while (1) {
-        int ch = getch(); 
-        if (ch != ERR) {
-            last_char = (char)ch; // Store the character
+        if (_kbhit()) { 
+            last_char = (char)_getch(); 
         }
 
         Sleep(10); 
     }
     return 0;
 }
+
 #else
 
 
@@ -85,7 +85,7 @@ int main() {
     init_board(&board);
     Tetromino tetromino = get_random_tetromino();
     
-#ifdef USE_WIN32_THREADS
+#ifdef _WIN32
     HANDLE thread = CreateThread(NULL, 0, thread_function, NULL, 0, NULL);
 #else
     pthread_t thread;
@@ -139,8 +139,9 @@ int main() {
 
     // Cleanup (won't execute due to infinite loop, but good practice)
     free_board(&board);
-    endwin(); 
-
+    #ifndef _WIN32
+        endwin(); // End the ncurses screen
+    #endif
 #ifdef _WIN32
     CloseHandle(thread);
 #else

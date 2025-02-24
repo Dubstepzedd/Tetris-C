@@ -7,7 +7,6 @@ set(CMAKE_C_STANDARD 11)
 if(WIN32)
     message(STATUS "Compiling for Windows - Using Win32 Threads")
     set(THREADS_LIB "")  # No need to link against Threads on Windows
-    # Windows-specific configuration: use conio.h or Windows API (no Curses)
 else()
     message(STATUS "Compiling for UNIX - Using Pthreads")
     find_package(Threads REQUIRED)

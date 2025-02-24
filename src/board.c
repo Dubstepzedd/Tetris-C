@@ -1,8 +1,10 @@
 #include "board.h"
 #ifdef _WIN32
-    #include <curses.h> // PDCurses on Windows
+    #include <conio.h> // conio.h on Windows
+    #define CLEAR_SCREEN() system("cls")
 #else
     #include <ncurses.h> // ncurses on Linux/Unix
+    #define CLEAR_SCREEN() clear()
 #endif
 
 void init_board(Board* board) {
@@ -42,22 +44,28 @@ void free_board(Board* board) {
 
 
 void print_board(Board* board) {
-    clear();
+    CLEAR_SCREEN();
 
-    for(int i = 0; i < board->height; i++) {  // Loop over height for rows
-        for(int j = 0; j < board->width; j++) {  // Loop over width for columns
+    for (int i = 0; i < board->height; i++) {  // Loop over height for rows
+        for (int j = 0; j < board->width; j++) {  // Loop over width for columns
             int val = board->board[i][j];
-            if (val == 0) {
-                addstr(" . ");
-            } 
-            else {
-                addstr(" O ");
-            }
-        }
-        addstr("\n");
+
+        #ifdef _WIN32
+                    printf(val == 0 ? " . " : " O ");
+        #else
+                    addstr(val == 0 ? " . " : " O ");
+        #endif
+                }
+        #ifdef _WIN32
+                printf("\n");
+        #else
+                addstr("\n");
+        #endif
     }
 
-    refresh();
+#ifndef _WIN32
+    refresh();  // Refresh ncurses screen only on Linux
+#endif
 }
 
 void check_line_clears(Board* board) {
